@@ -22,6 +22,10 @@ _rset='\033[0m'  # reset
 _brightness=-60
 _resolution=150
 
+[ -n "$INBOX" ] \
+	&& _inbox="$INBOX" \
+	|| _inbox="$HOME"/inbox
+
 mkscandir() {
 	if ! [ -d "${_scandir}" ] ; then
 		printf "${_good}%s${_rset}\n" "Creating scan directory"
@@ -34,7 +38,7 @@ setup_env() {
 		_scandir="$1"
 		mkscandir
 	else
-		_scandir="$INBOX"/scan-"$(date +%F-%H%M%S)"
+		_scandir="${_inbox}"/scan-"$(date +%F-%H%M%S)"
 		mkscandir
 	fi
 }
