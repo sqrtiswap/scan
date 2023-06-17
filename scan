@@ -14,4 +14,117 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-scanimage -pv --format=tiff --brightness -60 --resolution 150 > ~/inbox/sane-scanned-"$(date +%Y-%m-%d-%T.tiff)" && echo "tiffcp [tiff files] [merged tiff]" && echo "tiff2pdf [tiff] > [pdf]"
+_fail='\033[31m' # red
+_good='\033[32m' # green
+_rset='\033[0m'  # reset
+
+# default values
+_brightness=-60
+_resolution=150
+
+mkscandir() {
+	if ! [ -d "${_scandir}" ] ; then
+		printf "${_good}%s${_rset}\n" "Creating scan directory"
+		mkdir -p "${_scandir}"
+	fi
+}
+
+setup_env() {
+	if [ -n "$1" ] ; then
+		_scandir="$1"
+		mkscandir
+	else
+		_scandir="$INBOX"/scan-"$(date +%F-%H%M%S)"
+		mkscandir
+	fi
+}
+
+print_env() {
+	printf "Brightness: %s\n" "${_brightness}"
+	printf "Resolution: %s\n" "${_resolution}"
+	printf "Scan directory: %s\n" "${_scandir}"
+}
+
+scan() {
+	scanimage -pv --format=tiff \
+		--brightness "${_brightness}" \
+		--resolution "${_resolution}" \
+		> "${_scandir}"/scan-"$(date +%F-%H%M%S)".tiff
+}
+
+continueloop() {
+	IFS= read -r _continue
+	echo "${_continue}"
+	if [ "${_continue}" = "y" ] ; then
+		scanloop
+	elif [ "${_continue}" = "n" ] ; then
+		combine_doc
+	else
+		printf "${_fail}%s${_rset}\n" "Unknown option. Let\'s try this again."
+		printf "%s$ " "Continue with more pages? [y/n]"
+	fi
+}
+
+scanloop() {
+	if scan ; then
+		printf "${_good}%s${_rset} " "Scan finished. Continue with more pages? [y/n]"
+		continueloop
+	else
+		printf "${_fail}%s${_rset} " "Scan failed. Try again? [y/n]"
+		IFS= read -r _tryagain
+		if [ "${_tryagain}" = "y" ] ; then
+			scanloop
+		else
+			printf "Ok, aborting here.\n"
+		fi
+	fi
+}
+
+combine_doc() {
+	if tiffcp "${_scandir}"/scan-*.tiff "${_scandir}"/combined_scan.tiff ; then
+		printf "${_good}%s${_rset}\n" "Scanned pages combined"
+	else
+		printf "${_fail}%s${_rset}\n" "Combination failed"
+		exit 1
+	fi
+	if tiff2pdf "${_scandir}"/combined_scan.tiff > "${_scandir}"/scan.pdf ; then
+		printf "${_good}%s${_rset} " "Conversion to pdf succeeded. Open the document? [y/n]"
+		IFS= read -r _open
+		[ "${_open}" = "y" ] && open "${_scandir}"/scan.pdf
+		exit 0
+	fi
+}
+
+usage() { cat << USAGE
+${0##*/} - scanning script based on scanimage(1)
+usage: ${0##*/}	[-b brightness] [-r resolution] command [path]
+USAGE
+	exit 1
+}
+
+while getopts b:r: arg ; do
+	case ${arg} in
+		b) _brightness="${OPTARG}" ;;
+		r) _resolution="${OPTARG}" ;;
+		*) usage
+	esac
+done
+shift $((OPTIND - 1))
+
+case $1 in
+c*)
+	setup_env "$@"
+	combine_doc
+	;;
+h*)
+	usage
+	;;
+u*)
+	usage
+	;;
+*)
+	setup_env "$@"
+	print_env
+	scanloop
+	;;
+esac
