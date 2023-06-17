@@ -20,6 +20,7 @@ _rset='\033[0m'  # reset
 
 # default values
 _brightness=-60
+_colour=0
 _resolution=150
 
 [ -n "$INBOX" ] \
@@ -44,16 +45,28 @@ setup_env() {
 }
 
 print_env() {
-	printf "Brightness: %s\n" "${_brightness}"
-	printf "Resolution: %s\n" "${_resolution}"
+	printf "Brightness:     %s\n" "${_brightness}"
+	printf "Resolution:     %s\n" "${_resolution}"
 	printf "Scan directory: %s\n" "${_scandir}"
+	[ "${_colour}" -eq 1 ] \
+		&& printf "Colour:         true\n" \
+		|| printf "Colour:         false\n"
 }
 
 scan() {
-	scanimage -pv --format=tiff \
-		--brightness "${_brightness}" \
-		--resolution "${_resolution}" \
-		> "${_scandir}"/scan-"$(date +%F-%H%M%S)".tiff
+	if [ "${_colour}" -eq 1 ] ; then
+		scanimage -pv --format=tiff \
+			--brightness "${_brightness}" \
+			--resolution "${_resolution}" \
+			--mode=color \
+			> "${_scandir}"/scan-"$(date +%F-%H%M%S)".tiff
+	else
+		scanimage -pv --format=tiff \
+			--brightness "${_brightness}" \
+			--resolution "${_resolution}" \
+			--mode=gray \
+			> "${_scandir}"/scan-"$(date +%F-%H%M%S)".tiff
+	fi
 }
 
 continueloop() {
@@ -101,14 +114,15 @@ combine_doc() {
 
 usage() { cat << USAGE
 ${0##*/} - scanning script based on scanimage(1)
-usage: ${0##*/}	[-b brightness] [-r resolution] command [path]
+usage: ${0##*/}	[-b brightness] [-c] [-r resolution] command [path]
 USAGE
 	exit 1
 }
 
-while getopts b:r: arg ; do
+while getopts b:cr: arg ; do
 	case ${arg} in
 		b) _brightness="${OPTARG}" ;;
+		c) _colour=1 ;;
 		r) _resolution="${OPTARG}" ;;
 		*) usage
 	esac
