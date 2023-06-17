@@ -1,6 +1,6 @@
 # scan
 
-A Wrapper around `scanimage(1)`.
+Wrapper around `scanimage(1)` and friends when nothing better exists
 
 ## Why?
 Under BSD & Linux you have [SimpleScan](https://apps.gnome.org/en-GB/app/org.gnome.SimpleScan/) which is great.
@@ -21,7 +21,11 @@ make uninstall
 ```shell
 scan help
 ```
-and the manpage for `scanimage(1)`.
+provides a short help message.
+
+For everything else RTFM.
+
+Additionally the manpage for `scanimage(1)` and `scanimage --help` might be useful.
 
 ## License
 [ISC](https://opensource.org/licenses/ISC)

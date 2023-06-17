@@ -1,0 +1,101 @@
+.\" Copyright (c) 2023 Alexander Möller <alexander.moeller@detmold.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate: June 17 2023 $
+.Dt SCAN 1
+.Os
+.Sh NAME
+.Nm scan
+.Nd wrapper script to simplify scanning with
+.Xr scanimage 1
+.Sh SYNOPSIS
+.Nm
+.Op Fl c
+.Op Fl b Ar brightness
+.Op Fl r Ar resolution
+.Op command
+.Op path
+.Sh DESCRIPTION
+.Nm
+is a simple script to make scanning less cumbersome using
+.Xr scanimage 1 ,
+.Xr tiffcp 1
+and
+.Xr tiff2pdf 1 .
+.Pp
+The following commands are available:
+.Bl -tag -width Ds
+.It Cm scan Ar flags Ar path
+Scan with
+.Xr scanimage 1
+and according to the provided flags.
+.Pp
+If no path is specified,
+.Nm
+will default to scans in $INBOX/scan-%F-%H%M%S/ according to
+.Xr strftime 3 .
+.It Cm combine Ar path
+Combine multiple scans into one document.
+.Pp
+If no path is specified,
+.Nm
+will default to scans in $INBOX/scan-%F-%H%M%S/ according to
+.Xr strftime 3 .
+.It Cm help
+Print short help message.
+.Pp
+.El
+The following flags are available:
+.Bl -tag -width Ds
+.It -c
+Perform coloured scan. The default is greyscale.
+.It -b Ar brightness
+Adjust the brightness within [-100,100]. The default is -60.
+.It -r Ar resolution
+Adjust the resolution within {75,100,150,300,600,1200,2400} dpi. The default is 150.
+.El
+.Sh NOTES
+The commands only depend on the first letter. So instead of using
+.Bd -literal -offset indent
+$ scan combine
+.Ed
+.Pp
+it is also possible to use
+.Bd -literal -offset indent
+$ scan c
+.Ed
+.Pp
+Additionally scan is the default option. So instead of using
+.Bd -literal -offset indent
+$ scan scan
+.Ed
+.Pp
+it is also possible to just use
+.Bd -literal -offset indent
+$ scan
+.El
+.Sh ENVIRONMENT VARIABLES
+.Bl -tag -width "ENVIRONMENT" -compact
+.It Pa INBOX
+Directory where new scan directories are created.
+.Ed
+.Sh SEE ALSO
+.Xr scanimage 1 ,
+.Xr tiffcp 1 ,
+.Xr tiff2pdf 1 ,
+.Xr strftime 3
+.Sh AUTHOR
+.Nm
+was written by
+.An Alexander Möller Aq Mt alexander.moeller@detmold.com .
