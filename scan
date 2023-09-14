@@ -28,9 +28,11 @@ _resolution=150
 	|| _inbox="$HOME"/inbox
 
 mkscandir() {
-	if ! [ -d "${_scandir}" ] ; then
-		printf "${_good}%s${_rset}\n" "Creating scan directory"
-		mkdir -p "${_scandir}"
+	if ! [ -d "${_scandir}" ] && mkdir -p "${_scandir}" ; then
+		printf "${_good}%s${_rset}\n" "Scan directory created"
+	else
+		printf "${_fail}%s${_rset}\n" "Creation of scan directory failed"
+		exit 1
 	fi
 }
 
