@@ -71,7 +71,6 @@ scan() {
 
 continueloop() {
 	IFS= read -r _continue
-	echo "${_continue}"
 	if [ "${_continue}" = "y" ] ; then
 		scanloop
 	elif [ "${_continue}" = "n" ] ; then
