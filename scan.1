@@ -36,9 +36,11 @@ and either
 or
 .Xr convert 1 .
 .Pp
-The following commands are available:
+By default
+.Nm
+performs a full scan without the need to supply an additional command:
 .Bl -tag -width Ds
-.It Cm scan Ar flags Ar path
+.It Ar flags Ar path
 Scan with
 .Xr scanimage 1
 and according to the provided flags.
@@ -47,6 +49,10 @@ If no path is specified,
 .Nm
 will default to scans in $INBOX/scan-%F-%H%M%S/ according to
 .Xr strftime 3 .
+.El
+.Pp
+The following additional commands are available:
+.Bl -tag -width Ds
 .It Cm combine Ar path
 Combine multiple scans into one document.
 .Pp
@@ -65,7 +71,7 @@ Perform coloured scan. The default is greyscale.
 .It -b Ar brightness
 Adjust the brightness within [-100,100]. The default is -60.
 .It -r Ar resolution
-Adjust the resolution within {75,100,150,300,600,1200,2400} dpi. The default is 150.
+Adjust the resolution in dpi from the set {75,100,150,300,600,1200,2400}. The default value is 150.
 .El
 .Sh NOTES
 The commands only depend on the first letter. So instead of using
@@ -77,21 +83,11 @@ it is also possible to use
 .Bd -literal -offset indent
 $ scan c
 .Ed
-.Pp
-Additionally scan is the default option. So instead of using
-.Bd -literal -offset indent
-$ scan scan
-.Ed
-.Pp
-it is also possible to just use
-.Bd -literal -offset indent
-$ scan
-.El
 .Sh ENVIRONMENT VARIABLES
 .Bl -tag -width "ENVIRONMENT" -compact
 .It Pa INBOX
 Directory where new scan directories are created.
-.Ed
+.El
 .Sh SEE ALSO
 .Xr scanimage 1 ,
 .Xr tiffcp 1 ,

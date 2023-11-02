@@ -16,6 +16,7 @@
 
 _fail='\033[31m' # red
 _good='\033[32m' # green
+_warn='\033[33m' # yellow
 _rset='\033[0m'  # reset
 
 # default values
@@ -30,6 +31,14 @@ _resolution=150
 mkscandir() {
 	if ! [ -d "${_scandir}" ] && mkdir -p "${_scandir}" ; then
 		printf "${_good}%s${_rset}\n" "Scan directory created"
+	elif [ -d "${_scandir}" ] ; then
+		printf "${_warn}%s${_rset} " "Directory already exists. Proceed? [y/n]"
+		IFS= read -r _use_existing_dir
+		if [ "${_use_existing_dir}" = 'n' ] ; then
+			exit 1
+		elif [ "${_use_existing_dir}" != 'y' ] ; then
+			mkscandir
+		fi
 	else
 		printf "${_fail}%s${_rset}\n" "Creation of scan directory failed"
 		exit 1
@@ -145,9 +154,6 @@ c*)
 	combine_doc
 	;;
 h*)
-	usage
-	;;
-u*)
 	usage
 	;;
 *)
