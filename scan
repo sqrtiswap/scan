@@ -147,9 +147,6 @@ c*)
 h*)
 	usage
 	;;
-u*)
-	usage
-	;;
 *)
 	setup_env "$@"
 	print_env
