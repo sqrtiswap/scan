@@ -132,7 +132,7 @@ shift $((OPTIND - 1))
 
 case $1 in
 c*)
-	setup_env "$@"
+	_scandir="$2"
 	combine_doc
 	;;
 h*)
