@@ -12,7 +12,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: June 17 2023 $
+.Dd $Mdocdate: November 02 2023 $
 .Dt SCAN 1
 .Os
 .Sh NAME
@@ -31,8 +31,10 @@
 is a simple script to make scanning less cumbersome using
 .Xr scanimage 1 ,
 .Xr tiffcp 1
-and
-.Xr tiff2pdf 1 .
+and either
+.Xr tiff2pdf 1
+or
+.Xr convert 1 .
 .Pp
 The following commands are available:
 .Bl -tag -width Ds
@@ -94,6 +96,7 @@ Directory where new scan directories are created.
 .Xr scanimage 1 ,
 .Xr tiffcp 1 ,
 .Xr tiff2pdf 1 ,
+.Xr convert 1 ,
 .Xr strftime 3
 .Sh AUTHOR
 .Nm

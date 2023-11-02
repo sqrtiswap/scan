@@ -2,6 +2,10 @@
 
 Wrapper around `scanimage(1)` and friends when nothing better exists
 
+The friends:
+- `tiffcp(1)`
+- `tiff2pdf(1)`/`convert(1)`
+
 ## Why?
 Under BSD & Linux you have [SimpleScan](https://apps.gnome.org/en-GB/app/org.gnome.SimpleScan/) which is great.
 
