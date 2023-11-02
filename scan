@@ -105,12 +105,21 @@ combine_doc() {
 		printf "${_fail}%s${_rset}\n" "Combination failed"
 		exit 1
 	fi
-	if tiff2pdf "${_scandir}"/combined_scan.tiff > "${_scandir}"/scan.pdf ; then
-		printf "${_good}%s${_rset} " "Conversion to pdf succeeded. Open the document? [y/n]"
-		IFS= read -r _open
-		[ "${_open}" = "y" ] && open "${_scandir}"/scan.pdf
-		exit 0
+	if command -v tiff2pdf > /dev/null && tiff2pdf "${_scandir}"/combined_scan.tiff > "${_scandir}"/scan.pdf ; then
+		open_doc
+	elif command -v convert > /dev/null && convert "${_scandir}"/combined_scan.tiff "${_scandir}"/scan.pdf ; then
+		open_doc
+	else
+		printf "${_fail}%s${_rset}" "Conversion to pdf failed. No appropriate tool found."
+		exit 1
 	fi
+}
+
+open_doc() {
+	printf "${_good}%s${_rset}\n%s " "Conversion to pdf succeeded." "Open the document? [y/n]"
+	IFS= read -r _open
+	[ "${_open}" = "y" ] && open "${_scandir}"/scan.pdf
+	exit 0
 }
 
 usage() { cat << USAGE
